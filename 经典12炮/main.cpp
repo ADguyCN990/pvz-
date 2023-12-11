@@ -32,6 +32,22 @@ void AScript()
     AConnect(ATime(1, -599), []
              { aCobManager.AutoSetList(); });
 
+    // 吹气球（从AvZ教程直接粘的）
+    tickRunner.Start([]
+                     {
+            for (auto&& zombie : aAliveZombieFilter) {
+                if (zombie.Type() == ABALLOON_ZOMBIE && zombie.Abscissa() <= 100) { // 如果有气球僵尸的横坐标小于50 (快飞到家了)
+                    // 这句话是获得三叶草卡片的内存指针
+                    // AGetCardIndex 函数就是从卡片名称得到卡片在卡槽位置的函数
+                    auto blover = AGetMainObject()->SeedArray() + AGetCardIndex(ABLOVER);
+                    if (blover->IsUsable()) { // 三叶草可用时才能吹气球
+                        AShovel(5, 9);
+                        ACard(ABLOVER, 5, 9);
+                        return; // 吹一次就结束了，因为再循环遍历也没用了
+                    }
+                }
+            } });
+
     // P6
     // 主体节奏
     for (auto wave : {1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18})
