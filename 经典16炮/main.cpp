@@ -46,7 +46,7 @@ void AScript()
     {
         AConnect(ATime(wave, 341 - 373), []
                  { aCobManager.Fire({{2, 9}, {5, 9}}); });
-        AConnect(ATime(wave, 300), []
+        AConnect(ATime(wave, 341), []
                  {
                 if (AIsZombieExist(-1, 1) || AIsZombieExist(-1, 2) || AIsZombieExist(-1, 3)) {
                     aCobManager.RecoverFire(2, 9);
@@ -59,14 +59,14 @@ void AScript()
                 //     aCobManager.RecoverFire({{2, 9}, {5, 9}});
                 // } 
                 });
-        AConnect(ATime(wave, 400+373), []
+        AConnect(ATime(wave, 500+373), []
                  {
                      if (AIsZombieExist(-1, 3) || AIsZombieExist(-1, 4))
                      {
                          aCobManager.RecoverFire(3, 9);
                      }
                  });
-        AConnect(ATime(wave, 400+373), []
+        AConnect(ATime(wave, 500+373), []
                  {
                      if (AIsZombieExist(AGIGA_GARGANTUAR, 1) || AIsZombieExist(AGIGA_GARGANTUAR, 2)) {
                     aCobManager.RecoverFire(2, 9);
