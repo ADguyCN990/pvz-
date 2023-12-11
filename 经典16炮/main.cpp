@@ -46,7 +46,7 @@ void AScript()
     {
         AConnect(ATime(wave, 341 - 373), []
                  { aCobManager.Fire({{2, 9}, {5, 9}}); });
-        AConnect(ATime(wave, 341), []
+        AConnect(ATime(wave, 341 + 20), []
                  {
                 if (AIsZombieExist(-1, 1) || AIsZombieExist(-1, 2) || AIsZombieExist(-1, 3)) {
                     aCobManager.RecoverFire(2, 9);
@@ -66,15 +66,25 @@ void AScript()
                          aCobManager.RecoverFire(3, 9);
                      }
                  });
-        AConnect(ATime(wave, 500+373), []
+        AConnect(ATime(wave, 800+373), []
                  {
                      if (AIsZombieExist(AGIGA_GARGANTUAR, 1) || AIsZombieExist(AGIGA_GARGANTUAR, 2)) {
-                    aCobManager.RecoverFire(2, 9);
+                    aCobManager.RecoverFire(2, 8.7);
                 }
-                if (AIsZombieExist(AGIGA_GARGANTUAR, 4) || AIsZombieExist(AGIGA_GARGANTUAR, 5))
+                if (AIsZombieExist(AGIGA_GARGANTUAR, 5) || AIsZombieExist(AGIGA_GARGANTUAR, 6))
                 {
-                    aCobManager.RecoverFire(5, 9);
+                    aCobManager.RecoverFire(5, 8.7);
                 } });
+
+        // AConnect(ATime(wave, 1000 + 373), []
+        //          {
+        //              if (AIsZombieExist(-1, 1) || AIsZombieExist(-1, 2)) {
+        //             aCobManager.RecoverFire(2, 8);
+        //         }
+        //         if (AIsZombieExist(-1, 4) || AIsZombieExist(-1, 5))
+        //         {
+        //             aCobManager.RecoverFire(5, 8);
+        //         } });
     }
 
     // wave 10 的附加操作
