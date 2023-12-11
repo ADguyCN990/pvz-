@@ -1,5 +1,5 @@
 #include <avz.h>
-
+ATickRunner tickRunner;
 void AScript()
 {
     // ASetZombies({
