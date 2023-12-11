@@ -15,7 +15,7 @@ void AScript()
     //     AHY_32, // 红眼
     //     ATT_18, // 跳跳
     // });
-    //openMultipleEffective(); //自动循环
+    ASetReloadMode(AReloadMode::MAIN_UI_OR_FIGHT_UI);
     ASelectCards({
         AICE_SHROOM,   // 寒冰菇
         AM_ICE_SHROOM, // 模仿寒冰菇
@@ -34,7 +34,7 @@ void AScript()
 
     // P6
     // 主体节奏
-    for (auto wave : {1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19})
+    for (auto wave : {1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18})
     {
         AConnect(ATime(wave, 341 - 373), []
                  { aCobManager.Fire({{2, 9}, {5, 9}}); });
@@ -44,8 +44,37 @@ void AScript()
     // 收尾发四门炮
     for (auto wave : {9, 19, 20})
     {
+        AConnect(ATime(wave, 341 - 373), []
+                 { aCobManager.Fire({{2, 9}, {5, 9}}); });
         AConnect(ATime(wave, 300), []
-                 { aCobManager.RecoverFire({{2, 9}, {5, 9}, {2, 9}, {5, 9}}); });
+                 {
+                if (AIsZombieExist(-1, 1) || AIsZombieExist(-1, 2) || AIsZombieExist(-1, 3)) {
+                    aCobManager.RecoverFire(2, 9);
+                }
+                if (AIsZombieExist(-1, 4) || AIsZombieExist(-1, 5) || AIsZombieExist(-1, 6))
+                {
+                    aCobManager.RecoverFire(5, 9);
+                }
+                // if (AIsZombieExist(AGIGA_GARGANTUAR, -1) || AIsZombieExist(AGIGA_GARGANTUAR, -1)) {
+                //     aCobManager.RecoverFire({{2, 9}, {5, 9}});
+                // } 
+                });
+        AConnect(ATime(wave, 400+373), []
+                 {
+                     if (AIsZombieExist(-1, 3) || AIsZombieExist(-1, 4))
+                     {
+                         aCobManager.RecoverFire(3, 9);
+                     }
+                 });
+        AConnect(ATime(wave, 400+373), []
+                 {
+                     if (AIsZombieExist(AGIGA_GARGANTUAR, 1) || AIsZombieExist(AGIGA_GARGANTUAR, 2)) {
+                    aCobManager.RecoverFire(2, 9);
+                }
+                if (AIsZombieExist(AGIGA_GARGANTUAR, 4) || AIsZombieExist(AGIGA_GARGANTUAR, 5))
+                {
+                    aCobManager.RecoverFire(5, 9);
+                } });
     }
 
     // wave 10 的附加操作
@@ -62,6 +91,6 @@ void AScript()
 
     AConnect(ATime(20, 250 - 378), []
              { aCobManager.Fire(4, 7.625); });
-    AConnect(ATime(20, 341 - 373), []
-             { aCobManager.Fire({{2, 9}, {5, 9}}); });
+    // AConnect(ATime(20, 341 - 373), []
+    //          { aCobManager.Fire({{2, 9}, {5, 9}}); });
 }
