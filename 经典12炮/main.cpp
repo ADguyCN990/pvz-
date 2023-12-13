@@ -54,6 +54,7 @@ void AScript()
     {
         AConnect(ATime(wave, 341 - 373), []
                  { aCobManager.Fire({{2, 9}, {5, 9}}); });
+        
     }
 
     // wave 9 19 20的附加操作
@@ -62,7 +63,7 @@ void AScript()
     {
         AConnect(ATime(wave, 341 - 373), []
                  { aCobManager.Fire({{2, 9}, {5, 9}}); });
-        AConnect(ATime(wave, 341 + 20), []
+        AConnect(ATime(wave, 700), []
                  {
                 if (AIsZombieExist(-1, 1) || AIsZombieExist(-1, 2) || AIsZombieExist(-1, 3)) {
                     aCobManager.RecoverFire(2, 9);
@@ -75,7 +76,7 @@ void AScript()
                 //     aCobManager.RecoverFire({{2, 9}, {5, 9}});
                 // } 
                 });
-        AConnect(ATime(wave, 500+373), []
+        AConnect(ATime(wave, 300+373), []
                  {
                      if (AIsZombieExist(-1, 3) || AIsZombieExist(-1, 4))
                      {
