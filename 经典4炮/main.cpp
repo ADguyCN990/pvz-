@@ -1,140 +1,134 @@
+#include "avz.h"
+#include "AutoFodder/main.h"
 
+/*
+双冰变奏ch4 | I-PP | I-PP | (17.5, 17.5)
+第1波核弹，第2波预判炸，第10波核弹炸，第11波预判炸。4个加速波保证冰不会枯竭。
+*/
 
-#include <avz.h>
+APlantFixer pumpkinFixer;
 
-void AScript()
-{
-    ASetGameSpeed(10);
-    // 这种调用方式用于挂机，但是此脚本实际上不能挂机，还是需要一些手动操作
-    // 注意由于第二次进入游戏会导致核无法正常种下
-    // 所以 AAssumeWavelength 会报 N 个错误
+void AFK() {
+    // 挂机
     ASetReloadMode(AReloadMode::MAIN_UI_OR_FIGHT_UI);
-    ASetZombies({APJ_0, ATT_4, AWW_8, AQS_11, ABC_12, AXC_15, AKG_17, AHT_14, AFT_21, ABY_23, AHY_32, ABJ_20});
-    ASelectCards({AICE_SHROOM, AM_ICE_SHROOM, ACOFFEE_BEAN, ADOOM_SHROOM, ALILY_PAD, ASQUASH, ACHERRY_BOMB, ABLOVER, APUMPKIN, APUFF_SHROOM});
-    AAssumeWavelength({
-        ATime(1, 601),
-        ATime(2, 1800),
-        ATime(3, 1800),
-        ATime(4, 1150),
-        ATime(5, 601),
-        ATime(6, 1800),
-        ATime(7, 1800),
-        ATime(8, 1150),
-        ATime(10, 601),
-        ATime(11, 1800),
-        ATime(12, 1800),
-        ATime(13, 1150),
-        ATime(14, 601),
-        ATime(15, 1800),
-        ATime(16, 1800),
-        ATime(17, 1150),
-        ATime(18, 601),
+    // 十倍速
+    ASetGameSpeed(10);
+}
+
+void preWaveFire() {
+    aCobManager.Fire(2, 9);
+    aCobManager.Fire(5, 9);
+}
+
+void normalWaveFire() {
+    aCobManager.Fire(2, 8.5);
+    aCobManager.Fire(5, 8.5);
+}
+
+void lastWaveFire() {
+    aCobManager.RecoverFire(2, 8.5);
+    aCobManager.RecoverFire(5, 8.5);
+}
+
+void AScript() {
+    // 全难度极限出怪：普僵、撑杆、橄榄、舞王、冰车、小丑、矿工、跳跳、小偷、扶梯、投篮、白眼、红眼、海豚
+    ASetZombies({AZOMBIE,
+                 APOLE_VAULTING_ZOMBIE,
+                 AFOOTBALL_ZOMBIE,
+                 ADANCING_ZOMBIE,
+                 AZOMBONI,
+                 AJACK_IN_THE_BOX_ZOMBIE,
+                 ABALLOON_ZOMBIE,
+                 APOGO_ZOMBIE,
+                 ALADDER_ZOMBIE,
+                 ABUNGEE_ZOMBIE,
+                 ACATAPULT_ZOMBIE,
+                 ADOLPHIN_RIDER_ZOMBIE,
+                 AGARGANTUAR,
+                 AGIGA_GARGANTUAR
     });
 
-    AConnect(ATime(1, -599), [=]
-             {
-        aCobManager.SetList({{3, 1}, {4, 1}, {3, 3}, {4, 3}});
-        aIceFiller.Start({{3, 5}, {1, 4}, {6, 4}, {1, 5}, {6, 5}});
+    // 选卡
+    ASelectCards({AM_ICE_SHROOM,
+                  ASUN_SHROOM,
+                  APUFF_SHROOM,
+                  APUMPKIN,
+                  AFLOWER_POT,
+                  ALILY_PAD,
+                  ASCAREDY_SHROOM,
+                  ACOFFEE_BEAN,
+                  AICE_SHROOM,
+                  ADOOM_SHROOM});
 
-        // 自动补南瓜
-        aPlantFixer.Start(ANGT_30, {{3, 5}, {3, 6}, {4, 5}, {4, 6}, {1, 4}, {6, 4}});
-        aPlantFixer.SetHp(4000 / 3 * 2); });
+    // 开启10倍速挂机
+    AFK();
 
-    for (auto wave : {1, 5, 9, 14, 18})
-    {
-        AConnect(ATime(wave, 341 - 373), [=]
-                 { aCobManager.Fire({{2, 9}, {5, 9}}); });
-        if (wave == 9)
-        {
-            AConnect(ATime(wave, 341 - 373), [=]
-                     { aCobManager.RecoverFire({{2, 8.5}, {5, 8.5}}); });
-        }
-        else
-        {
-            // 这就是 AAssumeWavelength 带来的好处，可以让时间点的书写小于 -200
-            AConnect(ATime(wave + 1, -298 + 1) /* 1 是为了兼容栈位带来的 1cs 偏差*/, [=]
-                     { aIceFiller.Coffee(); });
-        }
+    // 初始化炮位
+    AConnect(ATime(1, -599), []{ aCobManager.AutoSetList(); });
+
+    // 自动存冰
+    aIceFiller.Start({{1, 4}, {6, 4}, {3, 5}});
+
+    // 自动修补水路南瓜
+    pumpkinFixer.Start(APUMPKIN, {{3, 5}, {4, 5}, {3, 6}, {4, 6}}, 4000 / 3);
+
+    // 自动垫材
+    AConnect([=]{return true;}, [=]{
+        AAutoFodder({{1, 5}, {2, 6}, {5, 6}, {6, 5}}, {}, {APUFF_SHROOM, ASUN_SHROOM, AFLOWER_POT, ASCAREDY_SHROOM}, 79);
+    });
+
+
+    // 第1波核弹炸
+    AConnect(ATime(1, 341 - 198 - 100), [=]{
+        ACard(ALILY_PAD, 3, 9);
+        ACard(ADOOM_SHROOM, 3, 9);
+        ACard(ACOFFEE_BEAN, 3, 9);
+    });
+
+    // 第10波的核弹
+    AConnect(ATime(10, 400 - 198 - 100), [=]{
+        ACard(ALILY_PAD, 3, 8);
+        ACard(ADOOM_SHROOM, 3, 8);
+        ACard(ACOFFEE_BEAN, 3, 8);
+    });
+
+    // 第2, 11波预判炸
+    for (int wave : {2, 11}) {
+        AConnect(ATime(wave, 341 - 373), [=]{
+            preWaveFire();
+        });
     }
 
-    for (auto wave : {2, 6, 11, 15, 19})
-    {
-        AConnect(ATime(wave, 1800 - 373 - 200), [=]
-                 { aCobManager.Fire({{2, 8.5}, {5, 8.5}}); });
+    // 第20波冰杀小偷
+    AConnect(ATime(20, 395 - 100 - 198), [=]{
+        aIceFiller.Coffee();
+    });
 
-        if (wave == 19)
-        {
-            AConnect(ATime(wave, 1800 - 373 - 200), [=]
-                     { aCobManager.RecoverFire({{2, 8.5}, {5, 8.5}}); });
+    // 第20波的PP
+    AConnect(ATime(20, 1550 - 373), [=]{
+        normalWaveFire();
+    });
 
-            // 停止自动存冰线程
-            AConnect(ATime(wave, 1800 - 373 - 200 + 1000), [=]
-                     { aIceFiller.Pause(); });
-        }
-        else
-        {
-            // Ice3
-            AConnect(ATime(wave, 1800 - 298 - 200 + 211), [=]
-                     {
-                aIceFiller.Coffee();
-                ASetPlantActiveTime(AICE_SHROOM, 298); });
-        }
-    }
+    // 第20波最后再轰一炮
+    AConnect(ATime(20, 1550 - 373), [=]{
+        aCobManager.RecoverFire(2, 8);
+        aCobManager.RecoverFire(5, 8);
+    });
 
-    for (auto wave : {3, 7, 12, 16})
-    {
-        AConnect(ATime(wave, 1800 - 373 - 200), [=]
-                 { aCobManager.Fire({{2, 8.5}, {5, 8.5}}); });
-        // Ice3
-        AConnect(ATime(wave, 1800 - 298 - 200 + 211), [=]
-                 {
+    // I-PP
+    for (int wave : {3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19}) {
+        AConnect(ATime(wave, -200), [=]{
             aIceFiller.Coffee();
-            ASetPlantActiveTime(AICE_SHROOM, 298); });
+        });
+        AConnect(ATime(wave, 1550 - 373), [=]{
+            normalWaveFire();
+        });
     }
 
-    for (auto wave : {4, 8, 13, 17})
-    {
-        // 使用核
-        // 注意这个核不一定会稳定刷新
-        AConnect(ATime(wave, 1150 - 200 - 298), [=]
-                 {
-            if (ARangeIn(wave, {4, 17})) {
-                ACard({{ALILY_PAD, 3, 8}, {ADOOM_SHROOM, 3, 8}, {ACOFFEE_BEAN, 3, 8}});
-            } else if (wave == 8) {
-                ACard({{ALILY_PAD, 3, 9},
-                    {ADOOM_SHROOM, 3, 9},
-                    {ACOFFEE_BEAN, 3, 9},
-                    {APUMPKIN, 3, 9}});
-            } else {
-                ACard({{ALILY_PAD, 4, 9},
-                    {ADOOM_SHROOM, 4, 9},
-                    {ACOFFEE_BEAN, 4, 9},
-                    {APUMPKIN, 4, 9}});
-            }
-
-            // 这里因为栈位问题会带来 1cs 的偏差
-            // 由于使用了假定波长函数，这里的波长必须和假定的波长严格保持一致
-            // 不然会报错，因此需要使用植物精准生效函数
-            ASetPlantActiveTime(ADOOM_SHROOM, 298); });
+    // 收尾
+    for (int wave : {9, 19, 20}) {
+        AConnect(ATime(wave, 1550 - 373), [=]{
+            lastWaveFire();
+        });
     }
-
-    // wave 10
-    AConnect(ATime(10, 341 - 373), []
-             { aCobManager.Fire({{2, 9}, {5, 9}}); });
-
-    // 种植樱桃消除延迟
-    AConnect(ATime(10, 341 - 100), []
-             { ACard(ACHERRY_BOMB, 2, 9); });
-
-    AConnect(ATime(10 + 1, -298 + 1) /* 1 是为了兼容栈位带来的 1cs 偏差*/, []
-             { aIceFiller.Coffee(); });
-
-    // wave 20
-    AConnect(ATime(20, 394 + 1 - 298) /* 1 是为了兼容栈位带来的 1cs 偏差*/, []
-             {
-                 aIceFiller.Coffee(); // 冰杀小偷
-             });
-
-    AConnect(ATime(20, 1000), []
-             { aCobManager.RecoverFire({{2, 9}, {5, 9}, {2, 8.5}, {5, 8.5}}); });
 }
