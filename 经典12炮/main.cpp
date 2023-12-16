@@ -117,8 +117,7 @@ void AScript()
     // 咆哮珊瑚(炮消)
     // 解决僵尸出生点靠右的问题
 
-    AConnect(ATime(20, 250 - 378), []
-             { aCobManager.Fire(4, 7.625); });
+    AConnect(ATime(20, 250 - 378), []{ aCobManager.Fire(4, 7.625); });
     // AConnect(ATime(20, 341 - 373), []
     //          { aCobManager.Fire({{2, 9}, {5, 9}}); });
 }
