@@ -2,10 +2,7 @@
 #include "AutoFodder/main.h"
 
 /*
-P6 | PP | BBPP | PP | BBPP | PP | BBPP | (6, 6, 6, 6, 6, 6)
-BBPP中的BB用于收上一波露的撑杆，同时击杀本波的快速僵尸，PP则用于收本波的撑杆，同时对巨人造成伤害
-PP: 1, 3, 5, 7, 9, 10, 12, 14, 16, 18, 20
-BBPP: 2*, 4*, 6, 8, 11, 13, 15, 17, 19
+P6 | PP | PP | PPSS | PP | PP | PPSS | (6, 6, 6, 6, 6, 6)
 */
 
 ATickRunner tickRunner;
@@ -43,7 +40,7 @@ void AScript() {
                   ASQUASH,
                   AFLOWER_POT,
                   ASCAREDY_SHROOM,
-                  AJALAPENO,
+                  AWALL_NUT,
                   ACOFFEE_BEAN,
                   AICE_SHROOM,
                   ASUN_SHROOM});
@@ -62,29 +59,23 @@ void AScript() {
     // 自动修补水路南瓜
     //pumpkinFixer.Start(APUMPKIN, {{3, 9}, {4, 9}}, 4000 / 3 * 2);
 
-    // 自动垫材
-    // for (int wave : {9, 19, 20}) {
-    //     AConnect([=] { return ANowWave() == wave && ANowTime(wave) >= 600; }, [] { 
-    //         AAutoFodder({{1, 9}, {2, 9}, {5, 9}, {6, 9}}, {}, {APUFF_SHROOM, ASUN_SHROOM, AFLOWER_POT, ASCAREDY_SHROOM}, 79);
-    //     });
-    // }
+    //自动垫材
+    for (int wave : {9, 19, 20}) {
+        AConnect([=] { return ANowWave() == wave && ANowTime(wave) >= 600; }, [] { 
+            AAutoFodder({}, {}, {APUFF_SHROOM, ASUN_SHROOM, AFLOWER_POT, ASCAREDY_SHROOM}, 79);
+        });
+    }
 
     // PP
-    for (int wave : {1, 3, 5, 7, 9, 10, 12, 14, 16, 18, 20}) {
+    for (int wave : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}) {
         AConnect(ATime(wave, 296 - 373), [=]{
             aCobManager.Fire({{2, 9}, {5, 9}});
         });
     }
 
-    // BBPP
-    // 610cs为撑杆僵尸对着8列炮起跳的最早时机
-    // 180cs为撑杆僵尸从起跳到落地的时长
-    for (int wave : {2, 4, 6, 8, 11, 13, 15, 17, 19}) {
-        AConnect(ATime(wave, 610 + 180 - 1 - 601 - 373), [=]{
-            aCobManager.Fire({{2, 8.8}, {5, 8.8}});
-        });
-
-        AConnect(ATime(wave, 400 - 373), [=]{
+    // SS
+    for (int wave : {3, 6, 9, 13, 16, 19}) {
+        AConnect(ATime(wave, 296 - 373), [=]{
             aCobManager.Fire({{2, 9}, {5, 9}});
         });        
     }
@@ -92,10 +83,14 @@ void AScript() {
 
     // 收尾
     for (int wave : {9, 19, 20}) {
-        AConnect(ATime(wave, 400 - 373), [=]{
-            aCobManager.RecoverFire({{2, 9}, {5, 9}, {2, 9}, {5, 9}, {2, 9}, {5, 9}});
+        AConnect(ATime(wave, 296 - 373), [=]{
+            aCobManager.RecoverFire({{2, 9}, {5, 9}, {2, 9}, {5, 9}});
         });
     }
+    AConnect(ATime(20, 296 - 373), [=]{
+        aCobManager.RecoverFire({{2, 9}, {5, 9}});
+    });
+
 
     // 炮消珊瑚
     AConnect(ATime(20, 250 - 378), []{ aCobManager.Fire(4, 7.625); });
@@ -103,8 +98,8 @@ void AScript() {
     // 冰杀小偷
     for (int wave : {10, 20}) {
         AConnect(ATime(wave, 395 - 100 - 198), [=]{
-            ACard(AICE_SHROOM, 1, 1);
-            ACard(ACOFFEE_BEAN, 1, 1);
+            ACard(AICE_SHROOM, 1, 7);
+            ACard(ACOFFEE_BEAN, 1, 7);
         });
     }
 
