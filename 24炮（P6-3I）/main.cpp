@@ -2,7 +2,7 @@
 #include "AutoFodder/main.h"
 
 /*
-冰代奏P6-2I | PPSSDD | PPI | PPSSDD | PPI | PPSSDD | PPI | (6, 6, 6, 6, 6, 6)
+冰代奏P6-3I | PPSSDD | PPI | PPSSDD | PPI | PPSSDD | PPI | (6, 6, 6, 6, 6, 6)
 PPSSDD: 1, 3, 5, 7, 9, 10, 12, 14, 16, 18, 20
 PP-I: 2*, 4*, 6, 8, 11, 13, 15, 17, 19
 */
