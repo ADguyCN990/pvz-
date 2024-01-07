@@ -1,7 +1,7 @@
 #include "avz.h"
 
 /*
-冰代奏P6-2I | PPDD | PPDD | PP-I | PPDD | PPDD | PP-I | (6, 6, 6, 6, 6, 6 v)
+冰代奏P6-2I | PPDD | PPDD | PP-I | PPDD | PPDD | PP-I | (6, 6, 6, 6, 6, 6)
 PPDD: 1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20
 PP-I: 3, 6, 9, 12, 15, 18
 */
